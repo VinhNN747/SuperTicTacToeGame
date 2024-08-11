@@ -11,8 +11,8 @@ var currentPlayer = 'X'
 thongbao.textContent = `${currentPlayer}'s turn!`
 
 // Variables to control the game flow
-var check = 1 // Used to track if the next move is valid
-var temp // Stores the last selected small box
+var validMoveCheck = 1 // Used to track if the next move is valid
+var lastSelectedSmallBox // Stores the last selected small box
 let running = false // Indicates if the game is running
 let smallWon = Array(9) // Tracks which small grids have been won
 smallWon.fill(false) // Initialize all as not won
@@ -74,12 +74,12 @@ function boxClicked() {
     const bigBoxIndex = this.parentElement.id // Get the big box in which the small box was played
 
     // Validate the move
-    if (smallOption[bigBoxIndex][smallBoxIndex] != '' || bigBoxIndex != temp && check == 0 || running == 0) {
+    if (smallOption[bigBoxIndex][smallBoxIndex] != '' || bigBoxIndex != lastSelectedSmallBox && validMoveCheck == 0 || running == 0) {
         return;
     }
 
-    temp = smallBoxIndex // Update the last selected small box
-    check = 0 // Reset the check variable
+    lastSelectedSmallBox = smallBoxIndex // Update the last selected small box
+    validMoveCheck = 0 // Reset the validMoveCheck variable
 
     // Update the board and check for winners
     updateBoard(this, bigBoxIndex, smallBoxIndex)
@@ -88,10 +88,10 @@ function boxClicked() {
     changePlayer() // Change the player
     thongbao.textContent = `${currentPlayer}'s turn!` // Update the display message
 
-    // If the next move is invalid, reset colors
+    // Check if there is any small box available to be selected
     if (!smallOption[smallBoxIndex].includes('')) {
-        temp = undefined
-        check = 1
+        lastSelectedSmallBox = undefined
+        validMoveCheck = 1
         resetColor()
     }
 }
@@ -166,12 +166,15 @@ function checkWinnerBig() {
         }
     }
 
-    // If the game is won or drawn, stop the game and display the message
+    // If the game is won or drawn, stop the game and display the message   
     if (bigWon) {
         console.log(`${currentPlayer} wins!`)
+        thongbao.textContent = `${currentPlayer} wins!`
+        resetColor()
         running = 0
     } else if (!bigOption.includes('')) {
         thongbao.textContent = "DRAW!"
+        resetColor()
         running = 0
     }
     console.log(bigWon) // Log the bigWon state
@@ -194,7 +197,7 @@ function restart() {
     bigOption = ['', '', '', '', '', '', '', '', ''] // Reset the big grid
     currentPlayer = 'X' // Reset the current player to 'X'
     thongbao.textContent = `${currentPlayer}'s turn!` // Update the display message
-    temp = undefined // Reset the temp variable
+    lastSelectedSmallBox = undefined // Reset the lastSelectedSmallBox variable
     check = 1 // Reset the check variable
     resetText() // Clear all the text on the board
     resetColor() // Reset the colors of the boxes
