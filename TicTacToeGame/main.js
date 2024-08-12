@@ -12,7 +12,7 @@ thongbao.textContent = `${currentPlayer}'s turn!`
 
 // Variables to control the game flow
 var validMoveCheck = 1 // Used to track if the next move is valid
-var lastSelectedSmallBox // Stores the last selected small box
+var lastSelectedSmallBox// Stores the last selected small box
 let running = false // Indicates if the game is running
 let smallWon = Array(9) // Tracks which small grids have been won
 smallWon.fill(false) // Initialize all as not won
@@ -44,10 +44,39 @@ let smallOption = [
 
 let bigOption = ['', '', '', '', '', '', '', '', '']
 
+function autoPlayer() { 
+    selectedBoxToPlay(0,0)
+    selectedBoxToPlay(0,1)
+    selectedBoxToPlay(1,0)
+    selectedBoxToPlay(0,4)
+    selectedBoxToPlay(4,0)
+    selectedBoxToPlay(0,7)
+    selectedBoxToPlay(7,4)
+    selectedBoxToPlay(4,3)
+    selectedBoxToPlay(3,4)
+    selectedBoxToPlay(4,5)
+    selectedBoxToPlay(5,4)
+    selectedBoxToPlay(4,4)
+    selectedBoxToPlay(4,8)
+    selectedBoxToPlay(8,6)
+    selectedBoxToPlay(6,8)
+    selectedBoxToPlay(8,7)
+    selectedBoxToPlay(7,8)
+    selectedBoxToPlay(8,8)
+}
+
+function selectedBoxToPlay(big, small) {
+    boxClicked(document.getElementById(`${big}`).querySelectorAll(".smallBox")[small])
+}
+
 // Resets the color of all boxes to the default color
 function resetColor() {
     bigBoxes.forEach(bigBox => bigBox.style.backgroundColor = '#3BB2E2')
-    smallBoxes.forEach(smallBox => smallBox.style.backgroundColor = '#3BB2E2')
+    smallBoxes.forEach(smallBox => () => {
+        if (smallBox.style.backgroundColor != '#07699b' ) {
+            smallBox.style.backgroundColor = '#3BB2E2'
+        }
+    })
 }
 
 // Clears the text content of all small boxes
@@ -57,10 +86,13 @@ function resetText() {
 
 // Start the game by adding event listeners to the small boxes and restart button
 gameStart()
+
 function gameStart() {
-    smallBoxes.forEach(smallBox => smallBox.addEventListener('click', boxClicked))
-    restartButton.addEventListener('click', restart)
     running = true // Set the game to running state
+    smallBoxes.forEach(smallBox => smallBox.addEventListener('click', () => boxClicked(smallBox)))
+    // autoPlayer()
+    
+    restartButton.addEventListener('click', restart)
 }
 
 // Switch the current player between 'X' and 'O'
@@ -69,9 +101,9 @@ function changePlayer() {
 }
 
 // Handles the event when a small box is clicked
-function boxClicked() {
-    const smallBoxIndex = this.getAttribute("smallId") // Get the selected small box index
-    const bigBoxIndex = this.parentElement.id // Get the big box in which the small box was played
+function boxClicked(smallBox) {
+    const smallBoxIndex = smallBox.getAttribute("smallId") // Get the selected small box index
+    const bigBoxIndex = smallBox.parentElement.id // Get the big box in which the small box was played
 
     // Validate the move
     if (smallOption[bigBoxIndex][smallBoxIndex] != '' || bigBoxIndex != lastSelectedSmallBox && validMoveCheck == 0 || running == 0) {
@@ -82,11 +114,9 @@ function boxClicked() {
     validMoveCheck = 0 // Reset the validMoveCheck variable
 
     // Update the board and check for winners
-    updateBoard(this, bigBoxIndex, smallBoxIndex)
+    updateBoard(smallBox, bigBoxIndex, smallBoxIndex)
     checkWinnerSmall(bigBoxIndex, smallWon, bigOption)
     checkWinnerBig(bigBoxIndex)
-    changePlayer() // Change the player
-    thongbao.textContent = `${currentPlayer}'s turn!` // Update the display message
 
     // Check if there is any small box available to be selected
     if (!smallOption[smallBoxIndex].includes('')) {
@@ -102,12 +132,21 @@ function updateBoard(smallBox, bigBoxIndex, smallBoxIndex) {
     smallOption[bigBoxIndex][smallBoxIndex] = currentPlayer // Update the small grid options
 
     console.clear()
+    console.log(smallBox)
     console.log(smallOption) // Log the current state of smallOption
 
     // Highlight the next big grid to be played in
     resetColor()
+    nextPlayingBox(smallBoxIndex)
+}
+
+function nextPlayingBox(smallBoxIndex) {
     bigBoxes[smallBoxIndex].style.backgroundColor = '#1d7a9f'
-    document.getElementById(smallBoxIndex).querySelectorAll('.smallBox').forEach(smallBox => smallBox.style.backgroundColor = '#1d7a9f')
+    document.getElementById(smallBoxIndex).querySelectorAll('.smallBox').forEach(smallBox => () => {
+        if (smallBox.style.backgroundColor != '#07699b') {
+            smallBox.style.backgroundColor = '#1d7a9f'
+        }
+    })
 }
 
 // Check if a player has won in the small grid
@@ -177,6 +216,10 @@ function checkWinnerBig() {
         resetColor()
         running = 0
     }
+    else {
+        changePlayer()
+        thongbao.textContent = `${currentPlayer}'s turn!` // Update the display message
+    }
     console.log(bigWon) // Log the bigWon state
 }
 
@@ -198,9 +241,11 @@ function restart() {
     currentPlayer = 'X' // Reset the current player to 'X'
     thongbao.textContent = `${currentPlayer}'s turn!` // Update the display message
     lastSelectedSmallBox = undefined // Reset the lastSelectedSmallBox variable
-    check = 1 // Reset the check variable
+    validMoveCheck = 1 // Reset the check variable
     resetText() // Clear all the text on the board
     resetColor() // Reset the colors of the boxes
     console.clear()
     running = true // Restart the game
+    smallBoxes.forEach(smallBox => smallBox.removeAttribute('style'));
+    // autoPlayer()
 }
