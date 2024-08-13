@@ -102,18 +102,19 @@ function changePlayer() {
 
 // Handles the event when a small box is clicked
 function boxClicked(smallBox) {
-    var clickSound = document.getElementById("clickSound")
-    clickSound.play()
-    clickSound.currentTime = 0
-
+    
     const smallBoxIndex = smallBox.getAttribute("smallId") // Get the selected small box index
     const bigBoxIndex = smallBox.parentElement.id // Get the big box in which the small box was played
-
+    
     // Validate the move
     if (smallOption[bigBoxIndex][smallBoxIndex] != '' || bigBoxIndex != lastSelectedSmallBox && validMoveCheck == 0 || running == 0) {
         return;
     }
-
+    
+    var clickSound = document.getElementById("clickSound")
+    clickSound.play()
+    clickSound.currentTime = 0
+    
     lastSelectedSmallBox = smallBoxIndex // Update the last selected small box
     validMoveCheck = 0 // Reset the validMoveCheck variable
 
