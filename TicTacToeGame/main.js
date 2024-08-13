@@ -102,6 +102,10 @@ function changePlayer() {
 
 // Handles the event when a small box is clicked
 function boxClicked(smallBox) {
+    var clickSound = document.getElementById("clickSound")
+    clickSound.play()
+    clickSound.currentTime = 0
+
     const smallBoxIndex = smallBox.getAttribute("smallId") // Get the selected small box index
     const bigBoxIndex = smallBox.parentElement.id // Get the big box in which the small box was played
 
@@ -167,6 +171,8 @@ function checkWinnerSmall(bigBoxIndex, smallWon, bigOption) {
             smallWon[bigBoxIndex] = true // Mark the small grid as won
             bigOption[bigBoxIndex] = currentPlayer // Update the big grid option
 
+            document.getElementById("smallWinSound").play()
+
             // Apply color based on which player won
             document.getElementById(bigBoxIndex).querySelectorAll('.smallBox').forEach(smallBox => {
                 const smallBoxId = parseInt(smallBox.getAttribute('smallId')) // Get the smallId and convert to integer
@@ -207,6 +213,7 @@ function checkWinnerBig() {
 
     // If the game is won or drawn, stop the game and display the message   
     if (bigWon) {
+        document.getElementById("bigWinSound").play()
         console.log(`${currentPlayer} wins!`)
         thongbao.textContent = `${currentPlayer} wins!`
         resetColor()
