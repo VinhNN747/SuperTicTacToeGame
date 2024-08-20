@@ -71,10 +71,9 @@ function selectedBoxToPlay(big, small) {
 
 // Resets the color of all boxes to the default color
 function resetColor() {
-    // bigBoxes.forEach(bigBox => bigBox.style.backgroundColor = '#3BB2E2')
-    bigBoxes.forEach(bigBox => bigBox.removeAttribute("style"))
+    bigBoxes.forEach(bigBox => bigBox.style.backgroundColor = '#3BB2E2')
     smallBoxes.forEach(smallBox => () => {
-        if (smallBox.style.backgroundColor != '#2A93C1' ) {
+        if (smallBox.style.backgroundColor != '#07699b' ) {
             smallBox.style.backgroundColor = '#3BB2E2'
         }
     })
@@ -110,7 +109,6 @@ function boxClicked(smallBox) {
     // Validate the move
     if (smallOption[bigBoxIndex][smallBoxIndex] != '' || bigBoxIndex != lastSelectedSmallBox && validMoveCheck == 0 || running == 0) {
         return;
-        
     }
     
     var clickSound = document.getElementById("clickSound")
@@ -149,14 +147,11 @@ function updateBoard(smallBox, bigBoxIndex, smallBoxIndex) {
 
 function nextPlayingBox(smallBoxIndex) {
     bigBoxes[smallBoxIndex].style.backgroundColor = '#1d7a9f'
-    document.querySelectorAll('.smallBox').forEach(smallBox => {
-        smallBox.style.pointerEvents = "none";
-    });
-    document.getElementById(smallBoxIndex).querySelectorAll('.smallBox').forEach(smallBox => { 
-        if(smallBox.textContent == "") {
-        smallBox.style.pointerEvents = "auto"
+    document.getElementById(smallBoxIndex).querySelectorAll('.smallBox').forEach(smallBox => () => {
+        if (smallBox.style.backgroundColor != '#07699b') {
+            smallBox.style.backgroundColor = '#1d7a9f'
         }
-    });
+    })
 }
 
 // Check if a player has won in the small grid
@@ -177,17 +172,15 @@ function checkWinnerSmall(bigBoxIndex, smallWon, bigOption) {
             smallWon[bigBoxIndex] = true // Mark the small grid as won
             bigOption[bigBoxIndex] = currentPlayer // Update the big grid option
 
-            var smallWinSound = document.getElementById("smallWinSound")
-            smallWinSound.play()
-            smallWinSound.currentTime = 0
+            document.getElementById("smallWinSound").play()
 
             // Apply color based on which player won
             document.getElementById(bigBoxIndex).querySelectorAll('.smallBox').forEach(smallBox => {
                 const smallBoxId = parseInt(smallBox.getAttribute('smallId')) // Get the smallId and convert to integer
                 if (smallBoxId % 2 === 0 && currentPlayer == "X") { // Check if the smallId is even
-                    smallBox.style.backgroundColor = '#2A93C1' // Apply the color
+                    smallBox.style.backgroundColor = '#07699b' // Apply the color
                 } else if (smallBoxId != 4 && currentPlayer == "O") {
-                    smallBox.style.backgroundColor = '#2A93C1'
+                    smallBox.style.backgroundColor = '#07699b'
                 }
             })
             break
@@ -221,9 +214,7 @@ function checkWinnerBig() {
 
     // If the game is won or drawn, stop the game and display the message   
     if (bigWon) {
-        var bigWinSound = document.getElementById("bigWinSound")
-        bigWinSound.play()
-        bigWinSound.currentTime = 0
+        document.getElementById("bigWinSound").play()
         console.log(`${currentPlayer} wins!`)
         thongbao.textContent = `${currentPlayer} wins!`
         resetColor()
@@ -242,9 +233,6 @@ function checkWinnerBig() {
 
 // Restart the game and reset all the states
 function restart() {    
-    var restartButtonSound = document.getElementById("restartButtonSound")
-    restartButtonSound.play()
-    restartButtonSound.currentTime = 0
     smallWon.fill(false) // Reset the small grids
     smallOption = [
         ['', '', '', '', '', '', '', '', ''],
